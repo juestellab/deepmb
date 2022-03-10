@@ -1,21 +1,19 @@
-function [rec_img] = reconstruct_model_based(model,sinogram)
-% Perform model-based reconstruction with fixed parameters
+function [rec_img] = reconstruct_model_based(model, sinogram, regularization, lambda_shearlet, lambda_tikhonov, lambda_laplacian, num_iterations_mb)
+% Perform model-based reconstruction
 
-num_iter_nn = 50;
-REGULARIZATION = 'SHEARLET'; % Choices: ('SHEARLET', 'L2')
-
-if strcmp(REGULARIZATION, 'SHEARLET')
-  lambdaShearlet = 1e-2;
-  rec_img = rec_nn_with_Shearlet_reg(model, sinogram, num_iter_nn, lambdaShearlet);  
+if strcmp(regularization, 'L1_SHEARLET')
+  rec_img = rec_nn_with_Shearlet_reg(model, sinogram, num_iterations_mb, lambda_shearlet);  
   
-elseif strcmp(REGULARIZATION, 'L2')
-  lambdaL2 = 5e-3;
+elseif strcmp(regularization, 'L2_TIKHONOV_AND_LAPLACIAN')
   RegL2 = @(x) x;
   RegL2T = @(x) x;  
-  rec_img = rec_nn_with_L2_reg(model, sinogram, num_iter_nn, lambdaL2, RegL2, RegL2T, 0, [], []);
+  RegL2_lap = @(x) laplacian_per_wavelength(reshape(x, model.Discretization.sizeOfPixelGrid(2), model.Discretization.sizeOfPixelGrid(1), []));
+  RegL2T_lap = @(x) laplacian_per_wavelength(reshape(x, model.Discretization.sizeOfPixelGrid(2), model.Discretization.sizeOfPixelGrid(1), []));
+  
+  rec_img = rec_nn_with_L2_reg(model, sinogram, num_iterations_mb, lambda_tikhonov, RegL2, RegL2T, lambda_laplacian, RegL2_lap, RegL2T_lap);
   
 else
-  disp(['Unknown regularisation: ' REGULARIZATION]);
+  disp(['Unknown regularisation: ' regularization]);
 end
 
 rec_img = fliplr(rec_img);

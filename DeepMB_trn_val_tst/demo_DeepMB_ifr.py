@@ -15,15 +15,15 @@ if __name__ == '__main__':
 
   ### Easy-access parameters that disregard those obtained by "get_parameters.py"
   # Root folder containing the results of all saved DeepMB experiments
-  save_path = '/media/guillaume/DATA/DEEP_MODEL_BASED/SAVE'
+  save_path = '???'
   # Experiment name (unique identifier of the network parameters "get_parameters.py" and model "model_min_val_loss.pt")
-  experiment_name = 'foo'
+  experiment_name = '???'
   # Absolute path to the sinogram input file
-  sinogram_path = '/media/guillaume/DATA/DEEP_MODEL_BASED/DATA/dataset_orange_probe/210504_dmb_test_orange_probe/test/sinograms/'
+  sinogram_path = '???'
   # Name of the sinogram input file (including extension, e.g., ".nii")
-  sinogram_filename = 'dmb_orange_p02_biceps_left_longitudinal_01_sosGt_1500_sosRec_1500_800nm.nii'
+  sinogram_filename = '???'
   # Speed of sound [m/s]
-  sos = 1500
+  sos = 1540
   # Boolean to indicate if the inferred image must be flipped upside-down
   flipud =  True
 

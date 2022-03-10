@@ -20,19 +20,36 @@ function [...
   recalculate,...
   path_to_rec_toolbox,...
   use_model_sinogram_mask,...
-  deviceId] = set_parameters_for_residual_norms_calculation()
+  device_id,...
+  N,...
+  field_of_view,...
+  use_eir,...
+  use_sir,...
+  use_single_speed_of_sound,...
+  filt_min,...
+  filt_max,...
+  num_cropped_samples_at_sinogram_start,...
+  use_indiv_eir] = set_parameters_for_residual_norms_calculation()
 
-  path_to_inferred_recons_nifti = '???';          % Path to DeepMB reconstructions (stored as ".nii" files), for which residual norms should be calculated.
-  file_name_filter_inferrred_images = '*.nii';    % Regex to filter the considered DeepMB images by their file name (optional).
-  path_to_dataset_split_with_gt_recs = '???';     % Path to dataset split that contains the sinograms and model-based reconstructions of all processed DeepMB reconstructions.
-  name_summary_file = 'residual_norms';           % Name of the summary file that will be created to store the results.
-  calculate_residual_norms_of_deepmb_recs = true; % Calculate the residual normss for the DeepMB reconstructions (should be "true", since these are expected to change between different experiments).
-  calculate_residual_norms_of_mb_recs = true;     % Calculate the residual norms for the ground truth model-based reconstructions (setting to "false" can save time, because these are not expected to change between different experiments).
-  calculate_residual_norms_of_bp_recs = true;     % Calculate the residual norms for the backprojection reconstructions (setting to "false" can save time, because these are not expected to change between different experiments).
-  calculate_reg_terms = true;                     % Specify whether regularization terms should also be calculated.
-  recalculate = false;                            % Specify whether all residual norms should be recalculated, or if previously stored values can be read instead.
-  path_to_rec_toolbox = '???';                    % Path to the model-based reconstruction toolbox.
-  use_model_sinogram_mask = true;                 % Speficy whether a model-dependant binary mask should be applied to the sinogram samples.
-  deviceId = '???';                               % Id of a MOST device (namely, a probe) defined in the model-based reconstruction toolbox.
-
+  path_to_inferred_recons_nifti = '???';               % Path to DeepMB reconstructions (stored as ".nii" files), for which residual norms should be calculated.
+  file_name_filter_inferrred_images = '*.nii';         % Regex to filter the considered DeepMB images by their file name (optional).
+  path_to_dataset_split_with_gt_recs = '???';          % Path to dataset split that contains the sinograms and model-based reconstructions of all processed DeepMB reconstructions.
+  name_summary_file = 'residual_norms';                % Name of the summary file that will be created to store the results.
+  calculate_residual_norms_of_deepmb_recs = true;      % Calculate the residual normss for the DeepMB reconstructions (should be "true", since these are expected to change between different experiments).
+  calculate_residual_norms_of_mb_recs = true;          % Calculate the residual norms for the ground truth model-based reconstructions (setting to "false" can save time, because these are not expected to change between different experiments).
+  calculate_residual_norms_of_bp_recs = true;          % Calculate the residual norms for the backprojection reconstructions (setting to "false" can save time, because these are not expected to change between different experiments).
+  calculate_reg_terms = true;                          % Specify whether regularization terms should also be calculated.
+  recalculate = false;                                 % Specify whether all residual norms should be recalculated, or if previously stored values can be read instead.
+  path_to_rec_toolbox = '???';                         % Path to the model-based reconstruction toolbox.
+  use_model_sinogram_mask = true;                      % Speficy whether a model-dependant binary mask should be applied to the sinogram samples.
+  device_id = '???';                                   % Id of a MOST device (namely, a probe) defined in the model-based reconstruction toolbox.
+  N = [416 416];                                       % Image dimension (px)
+  field_of_view = [-0.02075 0.02075 -0.02075 0.02075]; % Field of view (m)
+  use_eir = true;                                      % Electrical impulse response
+  use_sir = true;                                      % Spatial impulse response
+  use_single_speed_of_sound = true;                    % Indicate whether the probe couplant should be defined by a specific SoS
+  filt_min = 1e5;                                      % Lower bound of the bandpass filter (Hz)
+  filt_max = 12e6;                                     % Higher bound of the bandpass filter (Hz)
+  num_cropped_samples_at_sinogram_start = 110;         % Number of samples that are cropped from the beginning of the sinogram (in signal samples)
+  use_indiv_eir = false;                               % Indicate whether the EIR of each individual element should be taken into account
 end
