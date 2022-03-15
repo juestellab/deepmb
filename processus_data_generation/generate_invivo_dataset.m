@@ -39,7 +39,7 @@
 %% Initialize reconstructions
 run([path_to_rec_toolbox filesep 'startup_reconstruction.m']);
 addpath(genpath('data_generation_utils'));
-K = load_or_calculate_kernel_for_backprojection_rec(deviceId);
+K = load_or_calculate_kernel_for_backprojection_rec(device_id);
 
 %% Define output properties
 split = 'test';
