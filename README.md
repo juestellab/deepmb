@@ -52,6 +52,10 @@ Scripts to perform the training and the inference of the DeepMB network. Three f
 2. ``DeepMB > DeepMB_trn_val_tst > batch_DeepMB_ifr.py``: Script to infer a trained network on all samples of a given dataset.
 3. ``DeepMB > DeepMB_trn_val_tst > demo_DeepMB_ifr.py``: Toy example to infer a trained network on a single specific sample, meant to be easily adaptable to your own specific use-case.
 
+##### Prerequisites
+
+Set up a python (3.8 or higher) environment and install the following packages: `numpy`, `torch`, `torchvision`, `tensorboard`, `medpy`, and `natsort`.
+
 #### About the script ``DeepMB > DeepMB_trn_val_tst > run_DeepMB_trn_val_tst.py``
 
 ##### How to run the script:
