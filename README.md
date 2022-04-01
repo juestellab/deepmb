@@ -54,7 +54,7 @@ Scripts to perform the training and the inference of the DeepMB network. Three f
 
 ##### Prerequisites
 
-Set up a python (3.8 or higher) environment and install the following packages: `numpy`, `torch`, `torchvision`, `tensorboard`, `medpy`, and `natsort`.
+Set up a python (3.8 or higher) environment and install the following packages: `numpy`, `torch`, `torchvision`, `tensorboard`, `medpy`, `matplotlib`, and `natsort`.
 
 #### About the script ``DeepMB > DeepMB_trn_val_tst > run_DeepMB_trn_val_tst.py``
 
