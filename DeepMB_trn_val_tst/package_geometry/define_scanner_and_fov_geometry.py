@@ -31,11 +31,11 @@ def define_scanner_and_fov_geometry(SCANNER_ID):
     # Horizontal size of the image (px, nicely divisible by 2^7)
     NB_PIXELS_X = 416
     # Vertical size of the image (px, nicely divisible by 2^7)
-    NB_PIXELS_Y = 416
+    NB_PIXELS_Z = 416
     # Horizontal size of the image (m, yields a round pixel size of 100 um)
     IMA_SIZE_X = 0.0415
     # Vertical size of the image (m, yields a round pixel size of 100 um)
-    IMA_SIZE_Y = 0.0415
+    IMA_SIZE_Z = 0.0415
 
 
   # ----------------------------------------------------------------
@@ -61,11 +61,11 @@ def define_scanner_and_fov_geometry(SCANNER_ID):
     # Horizontal size of the image (px)
     NB_PIXELS_X = 512
     # Vertical size of the image (px)
-    NB_PIXELS_Y = 512
+    NB_PIXELS_Z = 512
     # Horizontal size of the image (m)
     IMA_SIZE_X = 0.02555
     # Vertical size of the image (m)
-    IMA_SIZE_Y = 0.02555
+    IMA_SIZE_Z = 0.02555
 
 
   # ----------------------------------------------------------------
@@ -91,11 +91,11 @@ def define_scanner_and_fov_geometry(SCANNER_ID):
     # Horizontal size of the image (px)
     NB_PIXELS_X = '???'
     # Vertical size of the image (px)
-    NB_PIXELS_Y = '???'
+    NB_PIXELS_Z = '???'
     # Horizontal size of the image (m)
     IMA_SIZE_X = '???'
     # Vertical size of the image (m)
-    IMA_SIZE_Y = '???'
+    IMA_SIZE_Z = '???'
 
 
   # ----------------------------------------------------------------
@@ -110,8 +110,8 @@ def define_scanner_and_fov_geometry(SCANNER_ID):
     ARRAY_RADIUS,
     ARRAY_ANGULAR_COVERAGE,
     NB_PIXELS_X,
-    NB_PIXELS_Y,
+    NB_PIXELS_Z,
     IMA_SIZE_X,
-    IMA_SIZE_Y)
+    IMA_SIZE_Z)
 
   return g

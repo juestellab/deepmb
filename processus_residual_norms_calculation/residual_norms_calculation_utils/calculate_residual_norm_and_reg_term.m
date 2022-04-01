@@ -28,7 +28,7 @@ if calculate_residual_norm
   % Read the NIFTI files corresponding to the raw signal and reconstructed pressure field
   sinogram = double(niftiread(path_and_filename_sinogram).*sinogram_mask);
   recon = double(niftiread(path_and_filename_recon));
-  recon = flipud(recon);
+  
   % Threshold negative values, if needed
   if is_bp
     recon = max(0, recon);

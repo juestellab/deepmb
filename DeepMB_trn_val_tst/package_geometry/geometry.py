@@ -15,9 +15,9 @@ class Geometry:
     ARRAY_RADIUS,
     ARRAY_ANGULAR_COVERAGE,
     NB_PIXELS_X,
-    NB_PIXELS_Y,
+    NB_PIXELS_Z,
     IMA_SIZE_X,
-    IMA_SIZE_Y):
+    IMA_SIZE_Z):
 
     ### Scanner
     # Scanner codename
@@ -46,20 +46,20 @@ class Geometry:
     # Horizontal coordinates of the transducer elements (m)
     self.ELEMENTS_X = ARRAY_RADIUS * np.cos(self.ARRAY_ANGULAR_STEPS * np.pi / 180)
     # Vertical coordinates of the transducer elements (m)
-    self.ELEMENTS_Y = ARRAY_RADIUS * np.sin(self.ARRAY_ANGULAR_STEPS * np.pi / 180)
+    self.ELEMENTS_Z = -1 * ARRAY_RADIUS * np.sin(self.ARRAY_ANGULAR_STEPS * np.pi / 180)
 
     ### Field of view
     # Horizontal size of the image (px)
     self.NB_PIXELS_X = NB_PIXELS_X
     # Vertical size of the image (px)
-    self.NB_PIXELS_Y = NB_PIXELS_Y
+    self.NB_PIXELS_Z = NB_PIXELS_Z
     # Horizontal size of the image (m)
     self.IMA_SIZE_X = IMA_SIZE_X
     # Vertical size of the image (m)
-    self.IMA_SIZE_Y = IMA_SIZE_Y
+    self.IMA_SIZE_Z = IMA_SIZE_Z
 
     ### Distances, in preparation for time-of-flight computation
     # Pre-calculate the distance from each pixel of the field of view to each element of the array (m)
     self.transducer_pixel_distances = precalculate_transducer_pixel_distances(
-      self.ELEMENTS_X, self.ELEMENTS_Y, self.IMA_SIZE_X, self.IMA_SIZE_Y, self.NB_PIXELS_X, self.NB_PIXELS_Y,
+      self.ELEMENTS_X, self.ELEMENTS_Z, self.IMA_SIZE_X, self.IMA_SIZE_Z, self.NB_PIXELS_X, self.NB_PIXELS_Z,
       self.NB_ELEMENTS)
