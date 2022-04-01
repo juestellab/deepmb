@@ -24,8 +24,6 @@ if __name__ == '__main__':
   sinogram_filename = '???'
   # Speed of sound [m/s]
   sos = 1540
-  # Boolean to indicate if the inferred image must be flipped upside-down
-  flipud =  True
 
   # Import the parameters
   parameters_path = os.path.join(save_path, experiment_name, 'stored_parameters')
@@ -78,10 +76,6 @@ if __name__ == '__main__':
 
     # Gather the network output back to CPU
     output_image = output_image.detach().cpu().numpy().squeeze()
-
-    # Flip the image upside-down, if necessary (in vivo images are vertically-mirrored)
-    if flipud:
-      output_image = np.flipud(output_image)
 
   # Display
   showcase_demo_DeepMB_ifr(
