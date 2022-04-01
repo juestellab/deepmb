@@ -18,7 +18,7 @@ Further unique features of DeepMB, with respect to existing methods, include:
 
 4. **In vivo applicability:** DeepMB accurately generalizes to in vivo data after training on synthesized sinograms that are derived from real-world images.
 
-5. **High-end scanners compatibility:** DeepMB is directly compatible with state-of-the-art clinical optoacoustic scanners because it supports high throughput data acquisition (sampling rate: 40 MHz; number of transducers: 256) and large image sizes (416×416 pixels).
+5. **Compatibility with high-end scanners:** DeepMB is directly compatible with state-of-the-art clinical optoacoustic scanners because it supports high throughput data acquisition (sampling rate: 40 MHz; number of transducers: 256) and large image sizes (416×416 pixels).
 
 6. **Straightforward applicability:** DeepMB can be used in the context of other optoacoustic reconstruction approaches that currently suffer from prohibitive reconstruction times, such as frequency-band model-based reconstruction (to disentangle structures of different physical scales) or Bayesian optoacoustic reconstruction (to quantify reconstruction uncertainty). More generally, the underlying methodology of DeepMB can also be exploited to accelerate parametrized (iterative) inversion approaches for other imaging modalities, such as ultrasound, X-ray computed tomography, magnetic resonance imaging, or, more generally, for any parametric partial differential equation.
 
