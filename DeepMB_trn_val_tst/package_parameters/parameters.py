@@ -63,7 +63,7 @@ class Parameters:
     DETERMINISTIC,
     RANDOM_SEED,
     GPU_INDEX,
-    # Selected images to pring
+    # Selected images to print
     ID_PRINT_TRN,
     REGEX_PRINT_VAL,
     REGEX_PRINT_TST):
