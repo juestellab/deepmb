@@ -1,5 +1,4 @@
 import time
-from package_utils import stopwatch
 
 
 class EpochLossAccumulator:
