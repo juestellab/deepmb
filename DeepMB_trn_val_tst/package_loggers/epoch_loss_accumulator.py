@@ -1,6 +1,3 @@
-import time
-
-
 class EpochLossAccumulator:
 
   def __init__(self):
