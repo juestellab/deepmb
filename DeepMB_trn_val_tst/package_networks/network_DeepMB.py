@@ -67,7 +67,8 @@ class Net(nn.Module):
     elif p.IMA_NET_ARCHI == 'SUM':
       self.net_ima = SumChannels(g.NB_ELEMENTS)
     elif p.IMA_NET_ARCHI == 'DAMPING':
-      self.net_ima = NetworkDamping(num_ch_ima_in, p.CH_STEPS_DAMPING, use_bias=p.USE_BIAS_IMA)
+      self.net_ima = NetworkDamping(
+        num_ch_ima_in, p.CH_STEPS_DAMPING, p.KERNEL_SIZE_DAMPING, p.PAD_SIZE_DAMPING, use_bias=p.USE_BIAS_IMA)
     else:
       raise Exception('Unknown IMA_NET_ARCHI: ' + p.IMA_NET_ARCHI)
 
