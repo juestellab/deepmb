@@ -11,7 +11,7 @@ def define_datasets(p, num_workers):
     loader_tst, nb_batches_tst, nb_samples_tst, regex_print_tst = define_standard_datasets(p, num_workers)
     flip_trn = False
     flip_val = False
-    flip_tst = False
+    flip_tst = True
     print('DATASET (Trn/Val): ' + p.DATASET_NAME_TRN_VAL)
     print('DATASET (Tst): ' + p.DATASET_NAME_TST)
 
@@ -20,9 +20,9 @@ def define_datasets(p, num_workers):
     loader_trn, nb_batches_trn, nb_samples_trn, regex_print_trn, \
     loader_val, nb_batches_val, nb_samples_val, regex_print_val, \
     loader_tst, nb_batches_tst, nb_samples_tst, regex_print_tst = define_alternative_datasets(p, num_workers)
-    flip_trn = False
-    flip_val = False
-    flip_tst = False
+    flip_trn = True
+    flip_val = True
+    flip_tst = True
     print('DATASET (in vivo only): ' + p.DATASET_NAME_TST)
     print('Participant ID for validation: ' + p.PARTICIPANT_ID_FOR_VAL)
     print('Participant ID for testing: ' + p.PARTICIPANT_ID_FOR_TST)

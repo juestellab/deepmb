@@ -1,5 +1,4 @@
 import torch
-import time
 import math
 import os
 import re
@@ -28,7 +27,7 @@ if __name__ == '__main__':
   # Experiment name (this ID uniquely identifies the network parameters and model)
   experiment_name = '???'
 
-  # Import the parameters
+  # Import the 'get_parameters' module from the specified experiment
   parameters_path = os.path.join(save_path, experiment_name, 'stored_parameters')
   sys.path.insert(0, parameters_path)
   from get_parameters import get_parameters
@@ -42,7 +41,7 @@ if __name__ == '__main__':
   # Specify whether each inferred image shall be printed as a png
   SAVE_PNG = True
 
-  # Get all parameters of a previous experiment
+  # Get the experiment parameters
   p = get_parameters()
 
   # Reset parameters for inference mode
@@ -109,8 +108,15 @@ if __name__ == '__main__':
   # Specify a list of optional criteria to only process a subset, as for instance "['1495']", or "['p02', 'biceps']"
   REGEX_ADDITIONAL_NAME_FILTER = ['']
 
-  # Enumerate the dataset
+  # Disable gradient calculation to accelerate inference
   with torch.no_grad():
+
+    # Prepare the synchronous timing procedure
+    time_start = torch.cuda.Event(enable_timing = True)
+    time_end   = torch.cuda.Event(enable_timing = True)
+    torch.cuda.synchronize()
+
+    # Enumerate the dataset
     for id_batch, (input_sinogram, ima_ref, filename, _, sos) in enumerate(loader_set):
 
       # Check whether the name of the current sample matches (all of) the REGEX target(s)
@@ -120,18 +126,26 @@ if __name__ == '__main__':
       if not process_sample:
         continue
 
+      # Start synchronous timing
+      torch.cuda.synchronize()
+      time_start.record()
+
       # Apply the network forward pass
-      t0 = time.time()
       ima_net = apply_network_forward_pass(
         sinogram                               = input_sinogram.to(device).float(),
         sos                                    = sos.to(device).float(),
         network                                = network,
         TRANSFORM_TST_NETWORK_OUTPUT           = p.TRANSFORM_TST_NETWORK_OUTPUT,
         DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION = p.DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION)
-      time_inference_ms = 1000 * (time.time() - t0)
+
+      # Measure timing synchronously
+      torch.cuda.synchronize()
+      time_end.record()
+      torch.cuda.synchronize()
+      time_inference_ms = time_start.elapsed_time(time_end)
 
       # Log the sample number and the inference time in the console
-      print('(' + str(time_inference_ms) + ' ms)\t Sample ' + str(id_batch +1) + '/' + str(nb_samples))
+      print('(' + str(int(time_inference_ms)) + 'ms)\t Sample ' + str(id_batch +1) + '/' + str(nb_samples))
 
       # Gather the network output back to CPU
       ima_net = ima_net.detach().cpu().numpy().squeeze() * p.DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION

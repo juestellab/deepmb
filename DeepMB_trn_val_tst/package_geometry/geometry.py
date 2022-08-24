@@ -3,7 +3,7 @@ from package_tof.precalculate_transducer_pixel_distances import precalculate_tra
 
 
 class Geometry:
-  
+
   def __init__(
     self,
     SCANNER_ID,
@@ -46,7 +46,7 @@ class Geometry:
     # Horizontal coordinates of the transducer elements (m)
     self.ELEMENTS_X = ARRAY_RADIUS * np.cos(self.ARRAY_ANGULAR_STEPS * np.pi / 180)
     # Vertical coordinates of the transducer elements (m)
-    self.ELEMENTS_Z = -1 * ARRAY_RADIUS * np.sin(self.ARRAY_ANGULAR_STEPS * np.pi / 180)
+    self.ELEMENTS_Z = ARRAY_RADIUS * np.sin(self.ARRAY_ANGULAR_STEPS * np.pi / 180)
 
     ### Field of view
     # Horizontal size of the image (px)
@@ -61,5 +61,10 @@ class Geometry:
     ### Distances, in preparation for time-of-flight computation
     # Pre-calculate the distance from each pixel of the field of view to each element of the array (m)
     self.transducer_pixel_distances = precalculate_transducer_pixel_distances(
-      self.ELEMENTS_X, self.ELEMENTS_Z, self.IMA_SIZE_X, self.IMA_SIZE_Z, self.NB_PIXELS_X, self.NB_PIXELS_Z,
+      self.ELEMENTS_X,
+      self.ELEMENTS_Z,
+      self.IMA_SIZE_X,
+      self.IMA_SIZE_Z,
+      self.NB_PIXELS_X,
+      self.NB_PIXELS_Z,
       self.NB_ELEMENTS)

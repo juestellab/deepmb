@@ -22,10 +22,14 @@ if __name__ == '__main__':
   sinogram_path = '???'
   # Name of the sinogram input file (including extension, e.g., ".nii")
   sinogram_filename = '???'
+  # Absolute path to the reference model-based reconstruction of the input sinogram (if available, else please use an empty string '')
+  reference_image_path = '???'
   # Speed of sound [m/s]
   sos = 1540
+  # Upside-down flip shall be applied to in-vivo images
+  flipud = True
 
-  # Import the parameters
+  # Import the 'get_parameters' module from the specified experiment
   parameters_path = os.path.join(save_path, experiment_name, 'stored_parameters')
   sys.path.insert(0, parameters_path)
   from get_parameters import get_parameters
@@ -56,7 +60,13 @@ if __name__ == '__main__':
   # Load the sinogram
   input_sinogram, _ = load(os.path.join(sinogram_path, sinogram_filename))
 
-  # Define the Tensor transformation that is applied to the sinograms
+  # Load the model-based reference image (if available)
+  if not reference_image_path == '':
+    reference_image, _ = load(os.path.join(reference_image_path, sinogram_filename))
+  else:
+    reference_image = None
+
+  # Define the Tensor transformation that is applied to the input sinogram
   transform_input = transforms.Compose(
     [transforms.ToTensor(),
     transforms.Normalize(mean=[0], std=[p.DIVISOR_FOR_INPUT_SINOGRAM_NORMALIZATION])])
@@ -74,13 +84,41 @@ if __name__ == '__main__':
       TRANSFORM_TST_NETWORK_OUTPUT           = p.TRANSFORM_TST_NETWORK_OUTPUT,
       DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION = p.DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION)
 
-    # Gather the network output back to CPU
-    output_image = output_image.detach().cpu().numpy().squeeze()
+    # Synchronous timing for info (the previous call to "apply_network_forward_pass" was used as the warm-up procedure)
+    time_start = torch.cuda.Event(enable_timing = True)
+    time_end   = torch.cuda.Event(enable_timing = True)
+    torch.cuda.synchronize()
+    time_start.record()
+    NB_ITER = 10
+    for iterx in range(NB_ITER):
+      # The network is applied "NB_ITER" times to calculate the average runtime (the output is disregarded)
+      apply_network_forward_pass(
+        sinogram                               = input_sinogram.to(device).float(),
+        sos                                    = sos.to(device).float(),
+        network                                = network,
+        TRANSFORM_TST_NETWORK_OUTPUT           = p.TRANSFORM_TST_NETWORK_OUTPUT,
+        DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION = p.DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION)
+    torch.cuda.synchronize()
+    time_end.record()
+    torch.cuda.synchronize()
+    time_inference_ms = time_start.elapsed_time(time_end)
+    print("Average inference time: " + str(int(time_inference_ms / NB_ITER)) + 'ms')
+
+  # Gather data back to CPU
+  output_image   = output_image.detach().cpu().numpy().squeeze()
+  input_sinogram = input_sinogram.detach().cpu().numpy().squeeze()
+  sos_value      = sos.detach().cpu().numpy().squeeze()
+
+  # Scale data to original scale
+  input_sinogram = input_sinogram * p.DIVISOR_FOR_INPUT_SINOGRAM_NORMALIZATION
+  output_image   = output_image * p.DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION
 
   # Display
   showcase_demo_DeepMB_ifr(
     output_image,
-    input_sinogram.detach().cpu().numpy().squeeze(),
-    int(sos.detach().cpu().numpy().squeeze()),
+    reference_image,
+    input_sinogram,
+    sos_value,
     sinogram_filename,
-    g)
+    g,
+    flipud)
