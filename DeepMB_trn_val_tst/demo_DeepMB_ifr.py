@@ -102,7 +102,7 @@ if __name__ == '__main__':
     time_end.record()
     torch.cuda.synchronize()
     time_inference_ms = time_start.elapsed_time(time_end)
-    print("Average inference time: " + str(int(time_inference_ms / NB_ITER)) + 'ms')
+    print('Average inference time: ' + str(int(time_inference_ms / NB_ITER)) + 'ms')
 
   # Gather data back to CPU
   output_image   = output_image.detach().cpu().numpy().squeeze()
