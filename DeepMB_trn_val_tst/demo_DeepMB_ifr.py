@@ -75,6 +75,9 @@ if __name__ == '__main__':
   input_sinogram = transform_input(input_sinogram).unsqueeze(0)
   sos = torch.tensor(float(sos)).unsqueeze(0)
 
+  # Optional optimization that slightly reduces the inference time of the network
+  network = torch.jit.trace(network, (input_sinogram.to(device).float(), sos.to(device).float()))
+
   # Apply the network forward pass
   with torch.no_grad():
     output_image = apply_network_forward_pass(

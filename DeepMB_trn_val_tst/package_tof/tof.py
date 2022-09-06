@@ -13,8 +13,8 @@ class ToF():
   def compute_tof(self, speed_of_sounds):
 
     # Reshape data (batch size is first dimension)
-    transducer_pixel_distances_expanded = self.transducer_pixel_distances.expand(len(speed_of_sounds), -1, -1, -1)
-    speed_of_sounds = speed_of_sounds.reshape(len(speed_of_sounds), 1, 1, 1)
+    transducer_pixel_distances_expanded = self.transducer_pixel_distances.expand(speed_of_sounds.shape[0], -1, -1, -1)
+    speed_of_sounds = speed_of_sounds.reshape(speed_of_sounds.shape[0], 1, 1, 1)
 
     # Calculate "tof", namely the time-of-flight values in m/s
     tof = torch.div(transducer_pixel_distances_expanded, speed_of_sounds)
