@@ -1,1 +1,2 @@
 DeepMB_trained_model_cd49_PyTorch/model_min_val_loss.pt filter=lfs diff=lfs merge=lfs -text
+DeepMB_trained_model_cd49_ONNX/model_min_val_loss.onnx filter=lfs diff=lfs merge=lfs -text
