@@ -1,36 +1,55 @@
-import os
-import torch
 import numpy as np
-from medpy.io import load
-from torchvision import transforms
+import os
 import sys
+import torch
+from medpy.io    import load
+from torchvision import transforms
 
-from package_geometry.define_scanner_and_fov_geometry import define_scanner_and_fov_geometry
-from package_networks import network_DeepMB
-from package_networks.apply_network_forward_pass import apply_network_forward_pass
-from package_utils.environment_check import environment_check
-from package_visualization.showcase_demo_DeepMB_ifr import showcase_demo_DeepMB_ifr
+from package_geometry.define_scanner_and_fov_geometry           import define_scanner_and_fov_geometry
+from package_utils.environment_check                            import environment_check
+from package_deployment.prepare_data_for_demo                   import prepare_data_for_demo
+from package_deployment.handle_infer_pytorch_model              import handle_infer_pytorch_model
+from package_deployment.display_deployment_results_pytorch_onnx import display_deployment_results_pytorch_onnx
+from package_deployment.display_deployment_results_pytorch      import display_deployment_results_pytorch
+
+
+# NOTE: Depending on your local environment and your own scikit configuration, you may encounter a conflict...
+# ... preventing the final figure to be displayed: in that case, please uncomment the line below:
+# os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+
 
 if __name__ == '__main__':
 
-  ### Easy-access parameters that disregard those obtained by "get_parameters.py"
-  # Root folder containing the results of all saved DeepMB experiments
-  save_path = '???'
-  # Experiment name (unique identifier of the network parameters "get_parameters.py" and model "model_min_val_loss.pt")
-  experiment_name = '???'
-  # Absolute path to the sinogram input file
-  sinogram_path = '???'
-  # Name of the sinogram input file (including extension, e.g., ".nii")
-  sinogram_filename = '???'
-  # Absolute path to the reference model-based reconstruction of the input sinogram (if available, else please use an empty string '')
-  reference_image_path = '???'
+  # ----------------------------------------------------------------
+  # --- <Parameters> -----------------------------------------------
+  # ----------------------------------------------------------------
+
+  # Name of the sample (including extension, e.g., ".nii")
+  # Please select one file that is provided on our GitHub:
+  # "https://github.com/juestellab/deepmb/tree/binaries/in_vivo_data/sinograms"
+  # NOTE: All the necessary files will be automatically downloaded by this demo script
+  sample_filename = 'dmb_orange_p06_biceps_left_longitudinal_01_sosGt_1485_sosRec_1485_800nm.nii'
+
   # Speed of sound [m/s]
-  sos = 1540
-  # Upside-down flip shall be applied to in-vivo images
-  flipud = True
+  # Please note that the optimal speed of sound is provided in the "sample_filename":
+  # "dmb_orange_<participant number>_<anatomy>_<probe orientation>_<repetition>_...
+  # ...<SoS determined for ground truth>_<SoS used for MB reconstruction>_<wavelength>.nii"
+  # NOTE: Recommened values are [1475, 1480, 1485, 1490, 1495, 1500, 1505, 1510, 1515, 1520, 1525] m/s
+  sos_value = 1485
+
+  # Use a just-in-time compiled version of the Pytorch model that slightly reduces the inference time
+  use_tracing = True
+
+  # Use the ONNX (Open Neural Network Exchange) compiled version of the DeepMB model for notable speed-up
+  # NOTE: This requires the installation of the Python packages "onnxruntime" and "onnxruntime-gpu"
+  use_onnx = False
+
+  # ----------------------------------------------------------------
+  # --- </Parameters> ----------------------------------------------
+  # ----------------------------------------------------------------
 
   # Import the 'get_parameters' module from the specified experiment
-  parameters_path = os.path.join(save_path, experiment_name, 'stored_parameters')
+  parameters_path = os.path.join('package_deployment', 'stored_parameters_cd49')
   sys.path.insert(0, parameters_path)
   from get_parameters import get_parameters
 
@@ -43,85 +62,50 @@ if __name__ == '__main__':
   # Sanity test
   use_cuda, device, _ = environment_check(p.DETERMINISTIC, p.RANDOM_SEED, p.GPU_INDEX)
 
-  # Instantiate the Network
-  network = network_DeepMB.Net(
-    torch.from_numpy(g.transducer_pixel_distances).to(device), g.F_SAMPLE, g.SAMPLES_OFFSET, device, p, g)
-  if use_cuda:
-    network.cuda(device=device)
-    network.float()
-
-  # Load the trained network and set it in "eval" mode
-  network_checkpoint_path_and_filename = os.path.join(
-    save_path, experiment_name, 'model_checkpoint', 'model_min_val_loss.pt')
-  checkpoint = torch.load(network_checkpoint_path_and_filename, map_location=device)
-  network.load_state_dict(checkpoint['network_state_dict'])
-  network.eval()
+  # Data for the demo: create the local folder structure and download the in vivo samples as well as the trained models
+  path_to_pytorch_model, path_to_onnx_model, pytorch_model_name, onnx_model_name, path_to_mb_images, path_to_sinograms = \
+    prepare_data_for_demo()
 
   # Load the sinogram
-  input_sinogram, _ = load(os.path.join(sinogram_path, sinogram_filename))
+  original_sinogram, _ = load(os.path.join(path_to_sinograms, sample_filename))
 
-  # Load the model-based reference image (if available)
-  if not reference_image_path == '':
-    reference_image, _ = load(os.path.join(reference_image_path, sinogram_filename))
-  else:
-    reference_image = None
+  # Load the target reference MB reconstruction
+  target_reference_image, _ = load(os.path.join(path_to_mb_images, sample_filename))
 
-  # Define the Tensor transformation that is applied to the input sinogram
+  # Define the Tensor transformation that is applied to the sinograms
   transform_input = transforms.Compose(
     [transforms.ToTensor(),
     transforms.Normalize(mean=[0], std=[p.DIVISOR_FOR_INPUT_SINOGRAM_NORMALIZATION])])
 
-  # Tensor-transform the sinogram as well as the SoS value
-  input_sinogram = transform_input(input_sinogram).unsqueeze(0)
-  sos = torch.tensor(float(sos)).unsqueeze(0)
+  # Tensor-transform the data (sinogram as well as SoS value), cast to appropriate type, and load to GPU memory
+  input_sinogram_gpu = transform_input(original_sinogram).unsqueeze(0).float().to(device)
+  input_sos_gpu      = torch.tensor(float(sos_value)).unsqueeze(0).float().to(device)
 
-  # Optional optimization that slightly reduces the inference time of the network
-  network = torch.jit.trace(network, (input_sinogram.to(device).float(), sos.to(device).float()))
+  # The models will be called several times to calculate the average inference time
+  NB_REPETITIONS = 25
 
-  # Apply the network forward pass
-  with torch.no_grad():
-    output_image = apply_network_forward_pass(
-      sinogram                               = input_sinogram.to(device).float(),
-      sos                                    = sos.to(device).float(),
-      network                                = network,
-      TRANSFORM_TST_NETWORK_OUTPUT           = p.TRANSFORM_TST_NETWORK_OUTPUT,
-      DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION = p.DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION)
+  # Define and apply the "vanilla" PyTorch model
+  output_ima_pytorch, time_inference_ms_pytorch = handle_infer_pytorch_model(
+    input_sinogram_gpu, input_sos_gpu, path_to_pytorch_model, pytorch_model_name, device, use_cuda, use_tracing, NB_REPETITIONS, p, g)
 
-    # Synchronous timing for info (the previous call to "apply_network_forward_pass" was used as the warm-up procedure)
-    time_start = torch.cuda.Event(enable_timing = True)
-    time_end   = torch.cuda.Event(enable_timing = True)
-    torch.cuda.synchronize()
-    time_start.record()
-    NB_ITER = 10
-    for iterx in range(NB_ITER):
-      # The network is applied "NB_ITER" times to calculate the average runtime (the output is disregarded)
-      apply_network_forward_pass(
-        sinogram                               = input_sinogram.to(device).float(),
-        sos                                    = sos.to(device).float(),
-        network                                = network,
-        TRANSFORM_TST_NETWORK_OUTPUT           = p.TRANSFORM_TST_NETWORK_OUTPUT,
-        DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION = p.DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION)
-    torch.cuda.synchronize()
-    time_end.record()
-    torch.cuda.synchronize()
-    time_inference_ms = time_start.elapsed_time(time_end)
-    print('Average inference time: ' + str(int(time_inference_ms / NB_ITER)) + 'ms')
+  # Define and apply the compiled ONNX model
+  if use_onnx:
+    from package_deployment.handle_infer_onnx_model_with_iobinding_to_pytorch_tensor import handle_infer_onnx_model_with_iobinding_to_pytorch_tensor
+    output_ima_onnx, time_inference_ms_onnx = handle_infer_onnx_model_with_iobinding_to_pytorch_tensor(
+      input_sinogram_gpu, input_sos_gpu, path_to_onnx_model, onnx_model_name, NB_REPETITIONS, p, g)
 
-  # Gather data back to CPU
-  output_image   = output_image.detach().cpu().numpy().squeeze()
-  input_sinogram = input_sinogram.detach().cpu().numpy().squeeze()
-  sos_value      = sos.detach().cpu().numpy().squeeze()
-
-  # Scale data to original scale
-  input_sinogram = input_sinogram * p.DIVISOR_FOR_INPUT_SINOGRAM_NORMALIZATION
-  output_image   = output_image * p.DIVISOR_FOR_TARGET_IMAGE_NORMALIZATION
+  # Log the inference time
+  time_per_frame_pytorch  = int(time_inference_ms_pytorch / NB_REPETITIONS)
+  print('[PyTorch] \t Average inference time: ' + str(time_per_frame_pytorch) + 'ms')
+  if use_onnx:
+    time_per_frame_onnx = int(time_inference_ms_onnx / NB_REPETITIONS)
+    print('[ONNX] \t Average inference time: ' + str(time_per_frame_onnx) + 'ms')
 
   # Display
-  showcase_demo_DeepMB_ifr(
-    output_image,
-    reference_image,
-    input_sinogram,
-    sos_value,
-    sinogram_filename,
-    g,
-    flipud)
+  if use_onnx:
+    display_deployment_results_pytorch_onnx(
+      original_sinogram, sos_value, target_reference_image, output_ima_pytorch, output_ima_onnx, sample_filename, g,
+      time_per_frame_pytorch, time_per_frame_onnx)
+  else:
+    display_deployment_results_pytorch(
+      original_sinogram, sos_value, target_reference_image, output_ima_pytorch, sample_filename, g, time_per_frame_pytorch)

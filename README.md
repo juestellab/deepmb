@@ -8,9 +8,9 @@ We hereby provide to sourcecode that was used to conceive the DeepMB paper [1].
 
 DeepMB is a deep-learning-based framework to reconstruct multispectral optoacoustic tomography images in real-time. DeepMB combines two previously antagonistic properties — image quality and reconstruction time:
 
-1. **State-of-the-art image quality:** DeepMB reconstructs images that are nearly-identical (both quantitatively and qualitatively) to state-of-the-art model-based reconstructions, while being markedly better than commonly-used backprojection reconstructions.
+1. **State-of-the-art image quality:** DeepMB reconstructs images that are nearly-identical (both quantitatively and qualitatively) to state-of-the-art iterative model-based reconstructions, while being markedly better than commonly-used backprojection reconstructions.
 
-2. **Real-time capability:** DeepMB reconstructs images in less than 10 ms, which is a comparable rate to lower quality backprojection reconstructions, but about 3000 times faster than state-of-the-art iterative model-based reconstructions.
+2. **Real-time capability:** DeepMB reconstructs images in 31 ms, which is a comparable rate to lower quality backprojection reconstructions, but about 3000 times faster than state-of-the-art iterative model-based reconstructions.
 
 Further unique features of DeepMB, with respect to existing methods, include:
 
@@ -31,7 +31,7 @@ DeepMB was developed in the Jüstel Lab, Institute for Biological and Medical Im
 
 ### Citation
 
-If you use this code please cite [1].
+Please cite [1] if you use this code and/or any of the provided binary files.
 
 ### DeepMB reference
 
@@ -54,7 +54,7 @@ Scripts to perform the training and the inference of the DeepMB network. Three f
 
 ##### Prerequisites
 
-Set up a python (3.8 or higher) environment and install the following packages: `numpy`, `torch`, `torchvision`, `tensorboard`, `medpy`, `matplotlib`, and `natsort`.
+Set up a python (3.8 or higher) environment and install the following packages: `numpy`, `matplotlib`, `torch`, `torchvision`, `tensorboard`, `medpy`, and `natsort`. To run the `demo_DeepMB_ifr.py` script, please install `requests`. To run the ONNX model, please install `onnxruntime` and `onnxruntime-gpu`.
 
 #### About the script ``DeepMB > DeepMB_trn_val_tst > run_DeepMB_trn_val_tst.py``
 
@@ -91,11 +91,10 @@ Set up a python (3.8 or higher) environment and install the following packages: 
 
 ##### How to run the script:
 
-1. Specify the variables ``save_path`` and ``experiment_name`` to indicate what previously trained network shall be used.
-2. Specify the variables ``sinogram_path`` and ``sinogram_filename`` to indicate what sample shall be inferred.
-3. Specify the variable ``sos`` to indicate the sound velocity value that shall be used during inference.
-4. Specify the variable ``flipud`` to indicate whether a vertical flip shall be applied to the inferred image before display.
-5. Run the script ``DeepMB > DeepMB_trn_val_tst > demo_DeepMB_ifr.py`` to infer the specified sample.
+1. Specify the variable ``sinogram_filename`` to indicate what sample shall be inferred (you can select one file that is already provided on our [GitHub storage](https://github.com/juestellab/deepmb/tree/binaries/in_vivo_data/sinograms).
+2. Specify the variable ``sos_value`` to indicate the sound velocity value that shall be used during inference.
+3. Specify the variables ``use_tracing`` and ``use_onnx`` to indicate whether optional acceleration features shall be employed.
+4. Run the script ``DeepMB > DeepMB_trn_val_tst > demo_DeepMB_ifr.py`` to infer the specified sample (all the necessary data will be automatically downloaded from our GitHub repository)
 
 ##### Output:
 
@@ -115,9 +114,9 @@ Scripts to generate the datasets necessary to train the DeepMB network. Two func
 1. Check out the MSOT Model-based Reconstruction Toolbox:
 [https://github.com/juestellab/mb-rec-msot](https://github.com/juestellab/mb-rec-msot).
 
-2. Download the Pascal VOC 2012 dataset from either 
+2. Download the Pascal VOC 2012 dataset from either
 [http://host.robots.ox.ac.uk/pascal/VOC/index.html](http://host.robots.ox.ac.uk/pascal/VOC/index.html)
-or 
+or
 [https://pjreddie.com/projects/pascal-voc-dataset-mirror/](https://pjreddie.com/projects/pascal-voc-dataset-mirror/).
 
 #### About the script ``DeepMB > processus_data_generation > generate_synthetic_dataset.m``
