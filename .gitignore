@@ -2,6 +2,7 @@
 set_parameters.py
 set_parameters_for_data_generation.m
 set_parameters_for_residual_calculation.m
+*/DeepMB_deployed_demo/*
 *.pyc
 *.swp
 *.swo
