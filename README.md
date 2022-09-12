@@ -10,7 +10,7 @@ DeepMB is a deep-learning-based framework to reconstruct multispectral optoacous
 
 1. **State-of-the-art image quality:** DeepMB reconstructs images that are nearly-identical (both quantitatively and qualitatively) to state-of-the-art iterative model-based reconstructions, while being markedly better than commonly-used backprojection reconstructions.
 
-2. **Real-time capability:** DeepMB reconstructs images in 31 ms, which is a comparable rate to lower quality backprojection reconstructions, but about 3000 times faster than state-of-the-art iterative model-based reconstructions.
+2. **Real-time capability:** DeepMB reconstructs images in 31 ms, which is a comparable rate to lower quality backprojection reconstructions, but about 1000 times faster than state-of-the-art iterative model-based reconstructions.
 
 Further unique features of DeepMB, with respect to existing methods, include:
 
