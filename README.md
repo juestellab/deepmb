@@ -35,7 +35,7 @@ Please cite [1] if you use this code and/or any of the provided binary files.
 
 ### DeepMB reference
 
-> [1] [Christoph Dehner, Guillaume Zahnd, Dominik Jüstel, and Vasilis Ntziachristos. DeepMB: Deep neural network for real-time model-based optoacoustic image reconstruction with adjustable speed of sound. 2022.](https://arxiv.org/abs/2206.14485)
+> [1] [Christoph Dehner, Guillaume Zahnd, Dominik Jüstel, and Vasilis Ntziachristos. DeepMB: Deep neural network for real-time optoacoustic image reconstruction with adjustable speed of sound. 2022.](https://arxiv.org/abs/2206.14485)
 
 ### Contact
 
