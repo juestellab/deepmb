@@ -54,7 +54,7 @@ Scripts to perform the training and the inference of the DeepMB network. Three f
 
 ##### Prerequisites
 
-Set up a python (3.8 or higher) environment and install the following packages: `numpy`, `matplotlib`, `torch`, `torchvision`, `tensorboard`, `medpy`, and `natsort`. To run the `demo_DeepMB_ifr.py` script, please install `requests`. To run the ONNX model, please install `onnxruntime` and `onnxruntime-gpu`.
+Set up a python (3.8 or higher) environment and install the following packages: `numpy 1.24.1`, `matplotlib 3.6.3`, `torch 2.0.1`, `torchvision 0.15.2`, `tensorboard 2.12.1`, `medpy 0.4.0`, and `natsort 8.2.0`. To run the `demo_DeepMB_ifr.py` script, please install `requests 2.31.0`. To run the ONNX model, please install `onnxruntime 1.15.0` and `onnxruntime-gpu 1.15.0`.
 
 #### About the script ``DeepMB > DeepMB_trn_val_tst > run_DeepMB_trn_val_tst.py``
 
