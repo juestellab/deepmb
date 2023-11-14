@@ -31,9 +31,9 @@ DeepMB was developed in the Jüstel Lab, Institute for Biological and Medical Im
 
 ### Data
 
-The synthesized training and validation dataset used in the DeepMB paper is available at [2]. Please note that the dataset was generated with the electrical impulse reponse of the specific scanner from the study and is therefore not suitable for training DeepMB models for other scanners.
+The synthesized training and validation dataset used in the DeepMB paper is available at [2]. Please note that the dataset was generated with the electrical impulse response of the specific scanner from the study and is therefore not suitable for training DeepMB models for other scanners.
 
-The in vivo test dataset used in the DeepMB paper cannot be shared due to privacy restrictions. However, a limited amount of scans is available [here](https://github.com/juestellab/deepmb/tree/binaries/in_vivo_data).
+The in vivo test dataset used in the DeepMB paper cannot be shared due to privacy restrictions. However, a limited number of scans is available [here](https://github.com/juestellab/deepmb/tree/binaries/in_vivo_data).
 
 ### Citation
 
