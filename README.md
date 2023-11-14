@@ -29,13 +29,21 @@ DeepMB was developed in the Jüstel Lab, Institute for Biological and Medical Im
 1. During network training, the mapping ``(input sinogram, input speed of sound) ➝ output image`` is learned , using the corresponding model-based reconstruction as the ``reference image``.
 2. During network inference, the mapping ``(input sinogram, input speed of sound) ➝ output image`` is applied.
 
+### Data
+
+The synthesized training and validation dataset used in the DeepMB paper is available at [2]. Please note that the dataset was generated with the electrical impulse reponse of the specific scanner from the study and is therefore not suitable for training DeepMB models for other scanners.
+
+The in vivo test dataset used in the DeepMB paper cannot be shared due to privacy restrictions. However, a limited amount of scans is available [here](https://github.com/juestellab/deepmb/tree/binaries/in_vivo_data).
+
 ### Citation
 
 Please cite [1] if you use this code and/or any of the provided binary files.
 
 ### DeepMB reference
 
-> [1] [Christoph Dehner, Guillaume Zahnd, Dominik Jüstel, and Vasilis Ntziachristos. DeepMB: Deep neural network for real-time optoacoustic image reconstruction with adjustable speed of sound. 2022.](https://arxiv.org/abs/2206.14485)
+> [1] Christoph Dehner, Guillaume Zahnd, Vasilis Ntziachristos, and Dominik Jüstel. A deep neural network for real-time optoacoustic image reconstruction with adjustable speed of sound. Nat. Mach. Intell. 5, 1130–1141 (2023). https://doi.org/10.1038/s42256-023-00724-3
+
+> [2] Christoph Dehner, Guillaume Zahnd. Synthesized training and validation dataset for DeepMB Zenodo (2023). https://doi.org/10.5281/zenodo.10118647
 
 ### Contact
 
